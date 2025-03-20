@@ -96,26 +96,23 @@
         async function runTest() {
             const query = document.getElementById('queryInput').value;
             const res = await fetch('/api/query', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query })
             });
+        
             const data = await res.json();
         
             if (data.success) {
+            // 실행 시간
             document.getElementById('result').innerText = `실행 시간: ${data.time}ms`;
             drawChart(data.time);
         
             // 리소스 요약
-            const resourceRes = await fetch('/api/resource', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const resourceData = await resourceRes.json();
-        
-            if (resourceData.success) {
-                const r = resourceData.resources;
+            const r = data.resources;
+            if (r) {
                 const resourceHTML = `
-                <h4>리소스 사용 요약</h4>
+                <h4>리소스 사용 요약 (DB 측정)</h4>
                 <ul>
                     <li>Query Cost (est.): <strong>${r.query_cost}</strong></li>
                     <li>Handler Read Key: <strong>${r.handler_read_key}</strong></li>
@@ -125,17 +122,32 @@
             }
         
             const explainRes = await fetch('/api/explain', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query })
             });
             const explainData = await explainRes.json();
         
             if (explainData.success && Array.isArray(explainData.plan)) {
                 renderExplainSummary(explainData.plan);
+        
+                const explainRows = explainData.plan
+                .map(row => Number(row.rows) || 0)
+                .reduce((sum, val) => sum + val, 0);
+        
+                const explainHTML = `
+                <h4>EXPLAIN 기반 리소스 요약</h4>
+                <ul>
+                    <li>Estimated Total Rows (from EXPLAIN): <strong>${explainRows}</strong></li>
+                </ul>
+                `;
+                document.getElementById('resource-summary').innerHTML += explainHTML;
             }
             } else {
             document.getElementById('result').innerText = `❌ Error: ${data.error}`;
             }
+        
+            console.log('DEBUG DATA:', data);
         }
 
         async function askAI() {

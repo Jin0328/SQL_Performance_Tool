@@ -8,7 +8,6 @@ dotenv.config();
 const queryTestRouter = require("./routes/queryTest");
 const aiSuggestRouter = require("./routes/aiSuggest");
 const explainRouter = require("./routes/explain");
-const resourceRouter = require('./routes/resource');
 
 
 const app = express();
@@ -18,7 +17,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/query", queryTestRouter);
 app.use("/api/suggest", aiSuggestRouter);
 app.use("/api/explain", explainRouter);
-app.use('/api/resource', resourceRouter);
 
 app.listen(3000, () => {
     console.log("SQL Performance Tool running on http://localhost:3000");
