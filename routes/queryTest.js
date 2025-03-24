@@ -13,8 +13,6 @@ router.post("/", async (req, res) => {
         const end = Date.now();
         const elapsed = end - start;
 
-        const [rowsExamined] = await conn.query("SHOW SESSION STATUS LIKE 'Rows_examined'");
-        const [rowsSent] = await conn.query("SHOW SESSION STATUS LIKE 'Rows_sent'");
         const [handlerReadKey] = await conn.query("SHOW SESSION STATUS LIKE 'Handler_read_key'");
         const [queryCost] = await conn.query("SHOW STATUS LIKE 'Last_query_cost'");
 
