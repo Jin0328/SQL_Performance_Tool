@@ -107,6 +107,21 @@
             // 실행 시간
             document.getElementById('result').innerText = `실행 시간: ${data.time}ms`;
             drawChart(data.time);
+
+            function drawChart(time) {
+                const ctx = document.getElementById('chart').getContext('2d');
+                if (window.queryChart) window.queryChart.destroy();
+                window.queryChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                    labels: ['Your Query'],
+                    datasets: [{ label: 'Execution Time (ms)', data: [time] }]
+                    },
+                    options: {
+                    scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
         
             // 리소스 요약
             const r = data.resources;
@@ -130,17 +145,6 @@
         
             if (explainData.success && Array.isArray(explainData.plan)) {
                 renderExplainSummary(explainData.plan);
-        
-                const explainRows = explainData.plan
-                .map(row => Number(row.rows) || 0)
-                .reduce((sum, val) => sum + val, 0);
-        
-                const explainHTML = `
-                <h4>EXPLAIN 기반 리소스 요약</h4>
-                <ul>
-                    <li>Estimated Total Rows (from EXPLAIN): <strong>${explainRows}</strong></li>
-                </ul>
-                `;
                 document.getElementById('resource-summary').innerHTML += explainHTML;
             }
             } else {
@@ -168,20 +172,6 @@
             }
         }
 
-        function drawChart(time) {
-        const ctx = document.getElementById('chart').getContext('2d');
-        if (window.queryChart) window.queryChart.destroy();
-        window.queryChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-            labels: ['Your Query'],
-            datasets: [{ label: 'Execution Time (ms)', data: [time] }]
-            },
-            options: {
-            scales: { y: { beginAtZero: true } }
-            }
-        });
-        }
 
         function renderExplainSummary(rows) {
         let html = '<h4> EXPLAIN 요약 테이블</h4>';
