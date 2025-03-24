@@ -88,6 +88,11 @@ http://localhost:3000
 ```
 
 ---
+
 ## Contact
 Contact chole02.han@gmail.com for further questions!
+
+---
+## More Information
+https://velog.io/@jiiiiin02/SQL-Performance-Tool-%EC%A0%9C%EC%9E%91%EA%B8%B0
 
